@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Weather</title>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<style>
+		body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+
+		.search-bar { text-align:center; margin-bottom: 30px; }
+
+		.current-weather {
+			background: white; padding: 30px; border-radius: 12px;
+			max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+		}
+
+		.forecast-row {
+			display: flex; 
+			gap: 10px; 
+			justify-content: center; 
+			margin-top: 20px; 
+			flex-wrap: wrap; 
+		}
+		.forecast-card {
+            background: white; 
+            padding: 15px; 
+            border-radius: 8px; 
+            width: 100px; 
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+         .skeleton {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            display: block;
+        }
+
+         .sk-title { width: 60%; height: 32px; margin: 10px auto; }
+        .sk-text { width: 40%; height: 20px; margin: 10px auto; }
+        .sk-card-img { width: 40px; height: 40px; margin: 10px auto; }
+	</style>
+</head>
+<body>
+
+	<div class="search-bar">
+		<input type="text" id="citySearch" placeholder="Search city (e.g Kuala Lumpur)">
+		<button id="searchBtn">Search</button>
+	</div>
+
+	<div class="current-weather">
+		<div id="cityName" class="skeleton sk-title"></div>
+		<div id="temp" class="skeleton sk-text"></div>
+		<div id="weatherDesc" class="skeleton sk-text"></div>
+		<div id="humidity" class="skeleton sk-text"></div>
+		<div id="windSpeed" class="skeleton sk-text"></div>
+		<div id="localTime" class="skeleton sk-text"></div>
+	</div>
+
+	 <div class="forecast-row">
+        <div class="forecast-card">
+        	<div class="skeleton sk-text"></div>
+        	<div class="skeleton sk-card-img"></div>
+        	<div class="skeleton sk-text"></div>
+        </div>
+
+        <div class="forecast-card">
+        	<div class="skeleton sk-text"></div>
+        	<div class="skeleton sk-card-img"></div>
+        	<div class="skeleton sk-text"></div>
+        </div>
+
+        <div class="forecast-card">
+        	<div class="skeleton sk-text"></div>
+        	<div class="skeleton sk-card-img"></div>
+        	<div class="skeleton sk-text"></div>
+        </div>
+
+        <div class="forecast-card">
+        	<div class="skeleton sk-text"></div>
+        	<div class="skeleton sk-card-img"></div>
+        	<div class="skeleton sk-text"></div>
+        </div>
+
+        <div class="forecast-card">
+        	<div class="skeleton sk-text"></div>
+        	<div class="skeleton sk-card-img"></div>
+        	<div class="skeleton sk-text"></div>
+        </div>
+
+        <div class="forecast-card">
+        	<div class="skeleton sk-text"></div>
+        	<div class="skeleton sk-card-img"></div>
+        	<div class="skeleton sk-text"></div>
+        </div>
+
+        <div class="forecast-card">
+        	<div class="skeleton sk-text"></div>
+        	<div class="skeleton sk-card-img"></div>
+        	<div class="skeleton sk-text"></div>
+        </div>
+
+    </div>
+		
+	
+</body>
+</html>
