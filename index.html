@@ -110,6 +110,7 @@
     </div>
 
     <script>
+    	let debounceTimer;
     	const weatherLookup = {
     		0: { desc: "Sunny", icon: "☀️" },   
     		3: { desc: "Cloudy", icon: "☁️" },  
@@ -123,13 +124,19 @@
         		alert("Please enter a valid city name.");
         		return;
         	}
-        	getWeatherData(city);
+
+        	clearTimeout (debounceTimer);
+        	debounceTimer = setTimeout(() => {
+        		getWeatherData(city);
+        	}, 500);
         });
 
         function getWeatherData(city) {
+        	const controller = new AbortController();
+        	const timeoutId = setTimeout(() => controller.abort(), 10000);
         	const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`;
 
-        	fetch(geoUrl)
+        	fetch(geoUrl, {signal: controller.signal})
         	.then(response => {
                 if (!response.ok) throw new Error("Network error");
                 return response.json();
@@ -137,28 +144,35 @@
             .then(geoData => {
                 if (!geoData.results) {
                     alert("City not found!");
+                    clearTimeout(timeoutId);
                     return;
                 }
                 const { latitude, longitude, name } = geoData.results[0];
                 
                 const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
 
-                return fetch(weatherUrl)
+                return fetch(weatherUrl, { signal: controller.signal })
                     .then(res => res.json())
                     .then(data => ({ name, data }));
             })
             .then(result => {
                 if (result) {
+                	clearTimeout(timeoutId);
                     updateUI(result.name, result.data);
                 }
             })
             .catch(error => {
-                console.error("Error:", error);
-                alert("Something went wrong fetching the data.");
+            	if (error.name === 'AbortError'){
+            		alert("Request timed out.");
+            	} else {
+            		console.error("Error:", error);
+            		alert("Something went wrong fetching the data.");
+            	}
             });
         }
 
         function updateUI(cityName, weatherData) {
+        	localStorage.setItem("lastSearchedCity", cityName);
         	const current = weatherData.current_weather;
         	const code = current.weathercode;
         	const weather = weatherLookup[code] || { desc: "Cloudy", icon: "☁️" };
@@ -168,7 +182,6 @@
             $("#humidity").removeClass("skeleton").text("Humidity: 60%");
             $("#windSpeed").removeClass("skeleton").text("Wind: " + current.windspeed + " km/h");
             $("#localTime").removeClass("skeleton").text("Update: " + current.time.split("T")[1]);
-            $(".forecast-row .skeleton").removeClass("skeleton").text("-");
 
             const daily = weatherData.daily;
             const cards = $(".forecast-card");
@@ -181,7 +194,7 @@
                 const date = new Date(daily.time[i]);
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
                 
-                dayCard.html(`
+                dayCard.removeClass("skeleton").html(`
                 <div style="font-weight: bold;">${dayName}</div>
                 <div style="font-size: 1.5rem; margin: 5px 0;">${dayWeather.icon}</div>
                 <div style="font-size: 0.9rem;">
@@ -189,12 +202,15 @@
                 <span style="color: #666;">${Math.round(daily.temperature_2m_min[i])}°</span>
                 </div>
                 `);
-                dayCard.find(".skeleton").removeClass("skeleton");
             }
         }
 
+        const savedCity = localStorage.getItem("lastSearchedCity");
+        if (savedCity) {
+        	getWeatherData(savedCity);
+        }
+
     </script>
-		
 	
 </body>
 </html>
