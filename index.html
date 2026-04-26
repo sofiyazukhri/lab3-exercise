@@ -141,7 +141,8 @@
                 }
                 const { latitude, longitude, name } = geoData.results[0];
                 
-                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=weathercode&timezone=auto`;
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
+
                 return fetch(weatherUrl)
                     .then(res => res.json())
                     .then(data => ({ name, data }));
