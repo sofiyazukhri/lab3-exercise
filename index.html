@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Weather</title>
+	<title>Weather Dashboard</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<style>
 		body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
@@ -108,6 +108,91 @@
         </div>
 
     </div>
+
+    <script>
+    	const weatherLookup = {
+    		0: { desc: "Sunny", icon: "☀️" },   
+    		3: { desc: "Cloudy", icon: "☁️" },  
+            61: { desc: "Rainy", icon: "🌧️" },  
+            95: { desc: "Stormy", icon: "⛈️" } 
+        };
+
+        $("#searchBtn").click(function() {
+        	const city = $("#citySearch").val().trim();
+        	if (city.length < 2) {
+        		alert("Please enter a valid city name.");
+        		return;
+        	}
+        	getWeatherData(city);
+        });
+
+        function getWeatherData(city) {
+        	const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`;
+
+        	fetch(geoUrl)
+        	.then(response => {
+                if (!response.ok) throw new Error("Network error");
+                return response.json();
+            })
+            .then(geoData => {
+                if (!geoData.results) {
+                    alert("City not found!");
+                    return;
+                }
+                const { latitude, longitude, name } = geoData.results[0];
+                
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=weathercode&timezone=auto`;
+                return fetch(weatherUrl)
+                    .then(res => res.json())
+                    .then(data => ({ name, data }));
+            })
+            .then(result => {
+                if (result) {
+                    updateUI(result.name, result.data);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Something went wrong fetching the data.");
+            });
+        }
+
+        function updateUI(cityName, weatherData) {
+        	const current = weatherData.current_weather;
+        	const code = current.weathercode;
+        	const weather = weatherLookup[code] || { desc: "Cloudy", icon: "☁️" };
+        	$("#cityName").removeClass("skeleton").text(cityName);
+            $("#temp").removeClass("skeleton").text(current.temperature + "°C");
+            $("#weatherDesc").removeClass("skeleton").text(weather.icon + " " + weather.desc);
+            $("#humidity").removeClass("skeleton").text("Humidity: 60%");
+            $("#windSpeed").removeClass("skeleton").text("Wind: " + current.windspeed + " km/h");
+            $("#localTime").removeClass("skeleton").text("Update: " + current.time.split("T")[1]);
+            $(".forecast-row .skeleton").removeClass("skeleton").text("-");
+
+            const daily = weatherData.daily;
+            const cards = $(".forecast-card");
+
+            for (let i = 0; i < 7; i++) {
+            	const dayCard = $(cards[i]);
+                const dayCode = daily.weathercode[i];
+                const dayWeather = weatherLookup[dayCode] || { desc: "Cloudy", icon: "☁️" };
+       
+                const date = new Date(daily.time[i]);
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                
+                dayCard.html(`
+                <div style="font-weight: bold;">${dayName}</div>
+                <div style="font-size: 1.5rem; margin: 5px 0;">${dayWeather.icon}</div>
+                <div style="font-size: 0.9rem;">
+                ${Math.round(daily.temperature_2m_max[i])}° / 
+                <span style="color: #666;">${Math.round(daily.temperature_2m_min[i])}°</span>
+                </div>
+                `);
+                dayCard.find(".skeleton").removeClass("skeleton");
+            }
+        }
+
+    </script>
 		
 	
 </body>
