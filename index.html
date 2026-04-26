@@ -5,30 +5,85 @@
 	<title>Weather Dashboard</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<style>
-		body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+		body { 
+			font-family: 'Segoe UI', Roboto, sans-serif; 
+			background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); 
+			min-height: 100vh;
+			padding: 20px; 
+			margin: 0; 
+		}
+
+		.header { 
+			text-align: center; 
+            color: #2c3e50; 
+            margin-top: 20px;
+            margin-bottom: 30px; 
+        }
+
+        .header h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 5px; 
+        }
+
+        .header p { 
+           font-size: 1.1rem; 
+           opacity: 0.8; 
+        } 
 
 		.search-bar { text-align:center; margin-bottom: 30px; }
 
+		#citySearch {
+			padding: 12px 20px;
+			width: 300px;
+			border-radius: 25px;
+			border: none;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+			outline: none;
+		}
+
+		#searchBtn {
+			padding: 12px 25px;
+			border-radius: 25px;
+			border: none;
+			background: #4facfe;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+			transition: background 0.3s;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+		}
+
+		#searchBtn:hover { background: #00f2fe; }
+
 		.current-weather {
-			background: white; padding: 30px; border-radius: 12px;
-			max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+			background: rgba(255, 255, 255, 0.9); 
+			padding: 40px; 
+			border-radius: 20px;
+			max-width: 500px; 
+			margin: 0 auto; 
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
+			text-align: center;
 		}
 
 		.forecast-row {
 			display: flex; 
-			gap: 10px; 
+			gap: 15px; 
 			justify-content: center; 
-			margin-top: 20px; 
+			margin-top: 30px; 
 			flex-wrap: wrap; 
 		}
 		.forecast-card {
-            background: white; 
-            padding: 15px; 
-            border-radius: 8px; 
-            width: 100px; 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(5px);
+            padding: 20px; 
+            border-radius: 15px; 
+            width: 110px; 
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
         }
+
+         .forecast-card:hover { transform: translateY(-5px); }
 
         @keyframes shimmer {
             0% { background-position: -200% 0; }
@@ -49,6 +104,10 @@
 	</style>
 </head>
 <body>
+	<div class="header">
+		<h1>Weather Dashboard</h1>
+		<p>Live Weather Updates & 7-Day Forecast</p>
+    </div>
 
 	<div class="search-bar">
 		<input type="text" id="citySearch" placeholder="Search city (e.g Kuala Lumpur)">
